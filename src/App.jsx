@@ -1,6 +1,16 @@
 import { useState } from 'react';
-import { Container, Row, Col, Card, Button, Navbar } from 'react-bootstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Navbar,
+  Badge,
+} from 'react-bootstrap';
+
 import Cart from './components/Cart';
+import { useCart } from './context/CartContext';
 
 const productsArr = [
   {
@@ -32,6 +42,8 @@ const productsArr = [
 function App() {
   const [showCart, setShowCart] = useState(false);
 
+  const { addToCart, cartItemCount } = useCart();
+
   return (
     <>
       <Navbar bg="dark" variant="dark" className="px-4">
@@ -42,7 +54,10 @@ function App() {
           className="ms-auto"
           onClick={() => setShowCart(!showCart)}
         >
-          🛒 Cart
+          🛒 Cart{' '}
+          <Badge bg="danger">
+            {cartItemCount}
+          </Badge>
         </Button>
       </Navbar>
 
@@ -63,11 +78,15 @@ function App() {
 
                   <Card.Body className="text-center">
                     <Card.Title>{product.title}</Card.Title>
+
                     <Card.Text className="fw-bold">
                       ₹{product.price}
                     </Card.Text>
 
-                    <Button variant="primary">
+                    <Button
+                      variant="primary"
+                      onClick={() => addToCart(product)}
+                    >
                       Add to Cart
                     </Button>
                   </Card.Body>
