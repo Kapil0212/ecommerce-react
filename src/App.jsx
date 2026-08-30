@@ -12,6 +12,7 @@ import { Routes, Route, NavLink } from 'react-router-dom';
 
 import Home from './components/Home';
 import About from './components/About';
+import Films from './components/Films';
 import Cart from './components/Cart';
 import { useCart } from './context/CartContext';
 
@@ -115,6 +116,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/store" element={<Store />} />
+      <Route path="/films" element={<Films />} />
       <Route path="/about" element={<About />} />
     </Routes>
   );
