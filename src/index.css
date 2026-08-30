@@ -9,6 +9,76 @@ body {
   padding: 20px;
 }
 
+/* Home Page */
+
+.home-hero {
+  height: 430px;
+  background: #777;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.home-hero h1 {
+  color: white;
+  font-size: 80px;
+  font-family: Georgia, serif;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 60px;
+}
+
+.home-hero .btn {
+  font-size: 25px;
+  padding: 12px 30px;
+}
+
+.play-button {
+  margin-top: 22px;
+  width: 84px;
+  height: 84px;
+  border: 2px solid #4dc3e8;
+  border-radius: 50%;
+  background: transparent;
+  color: #4dc3e8;
+  font-size: 32px;
+  cursor: pointer;
+}
+
+.tours-section {
+  padding-top: 55px;
+  padding-bottom: 70px;
+}
+
+.tours-section h2 {
+  text-align: center;
+  font-family: Georgia, serif;
+  font-weight: bold;
+  margin-bottom: 35px;
+}
+
+.tours-list {
+  max-width: 900px;
+  margin: auto;
+}
+
+.tour-row {
+  display: grid;
+  grid-template-columns: 90px 200px 1fr 160px;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 10px;
+  border-bottom: 1px solid #555;
+  font-family: Georgia, serif;
+}
+
+.ticket-button {
+  color: white;
+  font-weight: bold;
+  border: none;
+}
+
 .about-header {
   height: 200px;
   background: #777;
@@ -38,4 +108,15 @@ body {
   border-radius: 50%;
   float: left;
   margin: 0 40px 20px 0;
+}
+
+@media (max-width: 768px) {
+  .home-hero h1 {
+    font-size: 50px;
+  }
+
+  .tour-row {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
 }

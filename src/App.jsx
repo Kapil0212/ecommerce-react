@@ -10,9 +10,10 @@ import {
 } from 'react-bootstrap';
 import { Routes, Route, NavLink } from 'react-router-dom';
 
+import Home from './components/Home';
+import About from './components/About';
 import Cart from './components/Cart';
 import { useCart } from './context/CartContext';
-import About from './components/About';
 
 const productsArr = [
   {
@@ -51,17 +52,11 @@ function Store() {
         <Navbar.Brand>Ecommerce Store</Navbar.Brand>
 
         <div className="d-flex align-items-center gap-3 ms-auto">
-          <NavLink
-            to="/"
-            className="text-white text-decoration-none"
-          >
+          <NavLink to="/" className="text-white text-decoration-none">
             Home
           </NavLink>
 
-          <NavLink
-            to="/about"
-            className="text-white text-decoration-none"
-          >
+          <NavLink to="/about" className="text-white text-decoration-none">
             About
           </NavLink>
 
@@ -118,7 +113,8 @@ function Store() {
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Store />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/store" element={<Store />} />
       <Route path="/about" element={<About />} />
     </Routes>
   );
