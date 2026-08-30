@@ -8,9 +8,11 @@ import {
   Navbar,
   Badge,
 } from 'react-bootstrap';
+import { Routes, Route, NavLink } from 'react-router-dom';
 
 import Cart from './components/Cart';
 import { useCart } from './context/CartContext';
+import About from './components/About';
 
 const productsArr = [
   {
@@ -39,29 +41,42 @@ const productsArr = [
   },
 ];
 
-function App() {
-  const [showCart, setShowCart] = useState(false);
-
+function Store() {
   const { addToCart, cartItemCount } = useCart();
+  const [showCart, setShowCart] = useState(false);
 
   return (
     <>
       <Navbar bg="dark" variant="dark" className="px-4">
         <Navbar.Brand>Ecommerce Store</Navbar.Brand>
 
-        <Button
-          variant="outline-light"
-          className="ms-auto"
-          onClick={() => setShowCart(!showCart)}
-        >
-          🛒 Cart{' '}
-          <Badge bg="danger">
-            {cartItemCount}
-          </Badge>
-        </Button>
+        <div className="d-flex align-items-center gap-3 ms-auto">
+          <NavLink
+            to="/"
+            className="text-white text-decoration-none"
+          >
+            Home
+          </NavLink>
+
+          <NavLink
+            to="/about"
+            className="text-white text-decoration-none"
+          >
+            About
+          </NavLink>
+
+          <Button
+            variant="outline-light"
+            onClick={() => setShowCart(!showCart)}
+          >
+            🛒 Cart <Badge bg="danger">{cartItemCount}</Badge>
+          </Button>
+        </div>
       </Navbar>
 
-      {!showCart ? (
+      {showCart ? (
+        <Cart />
+      ) : (
         <Container className="py-5">
           <h1 className="text-center mb-5">Products</h1>
 
@@ -95,10 +110,17 @@ function App() {
             ))}
           </Row>
         </Container>
-      ) : (
-        <Cart />
       )}
     </>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Store />} />
+      <Route path="/about" element={<About />} />
+    </Routes>
   );
 }
 

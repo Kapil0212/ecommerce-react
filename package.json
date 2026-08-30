@@ -10,11 +10,11 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
+    "bootstrap": "latest",
     "react": "latest",
-    "react-dom": "latest",
     "react-bootstrap": "latest",
-    "bootstrap": "latest"
-  },
-  "devDependencies": {}
+    "react-dom": "latest",
+    "react-router-dom": "^7.18.3",
+    "vite": "latest"
+  }
 }
