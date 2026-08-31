@@ -8,12 +8,19 @@ import {
   Navbar,
   Badge,
 } from 'react-bootstrap';
-import { Routes, Route, NavLink } from 'react-router-dom';
+
+import {
+  Switch,
+  Route,
+  NavLink,
+} from 'react-router-dom';
 
 import Home from './components/Home';
 import About from './components/About';
-import Films from './components/Films';
 import Cart from './components/Cart';
+import Films from './components/Films';
+import Contact from './components/Contact';
+
 import { useCart } from './context/CartContext';
 
 const productsArr = [
@@ -53,20 +60,38 @@ function Store() {
         <Navbar.Brand>Ecommerce Store</Navbar.Brand>
 
         <div className="d-flex align-items-center gap-3 ms-auto">
-          <NavLink to="/" className="text-white text-decoration-none">
+
+          <NavLink
+            to="/"
+            className="text-white text-decoration-none"
+          >
             Home
           </NavLink>
 
-          <NavLink to="/about" className="text-white text-decoration-none">
+          <NavLink
+            to="/about"
+            className="text-white text-decoration-none"
+          >
             About
+          </NavLink>
+
+          <NavLink
+            to="/contact"
+            className="text-white text-decoration-none"
+          >
+            Contact Us
           </NavLink>
 
           <Button
             variant="outline-light"
             onClick={() => setShowCart(!showCart)}
           >
-            🛒 Cart <Badge bg="danger">{cartItemCount}</Badge>
+            🛒 Cart{' '}
+            <Badge bg="danger">
+              {cartItemCount}
+            </Badge>
           </Button>
+
         </div>
       </Navbar>
 
@@ -74,12 +99,21 @@ function Store() {
         <Cart />
       ) : (
         <Container className="py-5">
-          <h1 className="text-center mb-5">Products</h1>
+          <h1 className="text-center mb-5">
+            Products
+          </h1>
 
           <Row className="g-4 justify-content-center">
             {productsArr.map((product) => (
-              <Col key={product.title} xs={12} sm={6} md={4} lg={3}>
+              <Col
+                key={product.title}
+                xs={12}
+                sm={6}
+                md={4}
+                lg={3}
+              >
                 <Card className="h-100 shadow-sm">
+
                   <Card.Img
                     variant="top"
                     src={product.imageUrl}
@@ -88,7 +122,10 @@ function Store() {
                   />
 
                   <Card.Body className="text-center">
-                    <Card.Title>{product.title}</Card.Title>
+
+                    <Card.Title>
+                      {product.title}
+                    </Card.Title>
 
                     <Card.Text className="fw-bold">
                       ₹{product.price}
@@ -100,6 +137,7 @@ function Store() {
                     >
                       Add to Cart
                     </Button>
+
                   </Card.Body>
                 </Card>
               </Col>
@@ -113,12 +151,29 @@ function Store() {
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/store" element={<Store />} />
-      <Route path="/films" element={<Films />} />
-      <Route path="/about" element={<About />} />
-    </Routes>
+    <Switch>
+
+      <Route path="/about">
+        <About />
+      </Route>
+
+      <Route path="/contact">
+        <Contact />
+      </Route>
+
+      <Route path="/films">
+        <Films />
+      </Route>
+
+      <Route path="/store">
+        <Store />
+      </Route>
+
+      <Route path="/">
+        <Home />
+      </Route>
+
+    </Switch>
   );
 }
 
