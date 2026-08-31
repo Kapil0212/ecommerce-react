@@ -1,18 +1,14 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Container, Card, Button, Spinner, Form } from 'react-bootstrap';
+
+const DATABASE_URL =
+  'https://ecommerce-react-d299b-default-rtdb.firebaseio.com/movies';
 
 function Films() {
   const [films, setFilms] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState(false);
-  const [retrying, setRetrying] = useState(false);
 
   const [movie, setMovie] = useState({
     title: '',
@@ -23,15 +19,13 @@ function Films() {
   const retryTimeout = useRef(null);
   const cancelled = useRef(false);
 
+  // Fetch movies from Firebase
   const fetchFilms = useCallback(async () => {
     setIsLoading(true);
     setError(false);
-    cancelled.current = false;
 
     try {
-      const response = await fetch(
-        'https://swapi.info/api/films'
-      );
+      const response = await fetch(`${DATABASE_URL}.json`);
 
       if (!response.ok) {
         throw new Error('Something went wrong');
@@ -39,19 +33,21 @@ function Films() {
 
       const data = await response.json();
 
-      setFilms(data);
+      if (data) {
+        const loadedMovies = Object.entries(data).map(([id, movie]) => ({
+          id,
+          ...movie,
+        }));
+
+        setFilms(loadedMovies);
+      } else {
+        setFilms([]);
+      }
+
       setIsLoading(false);
-      setRetrying(false);
     } catch (error) {
       setIsLoading(false);
       setError(true);
-      setRetrying(true);
-
-      retryTimeout.current = setTimeout(() => {
-        if (!cancelled.current) {
-          fetchFilms();
-        }
-      }, 5000);
     }
   }, []);
 
@@ -67,6 +63,7 @@ function Films() {
     };
   }, [fetchFilms]);
 
+  // Input handler
   const handleChange = useCallback((event) => {
     const { name, value } = event.target;
 
@@ -76,51 +73,107 @@ function Films() {
     }));
   }, []);
 
+  // Add movie to Firebase
   const handleSubmit = useCallback(
-    (event) => {
+    async (event) => {
       event.preventDefault();
 
-      const NewMovieObj = {
+      setIsAdding(true);
+
+      const newMovie = {
         title: movie.title,
         openingText: movie.openingText,
         releaseDate: movie.releaseDate,
       };
 
-      console.log(NewMovieObj);
+      try {
+        const response = await fetch(`${DATABASE_URL}.json`, {
+          method: 'POST',
+          body: JSON.stringify(newMovie),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Could not add movie');
+        }
+
+        const data = await response.json();
+
+        setFilms((prevFilms) => [
+          ...prevFilms,
+          {
+            id: data.name,
+            ...newMovie,
+          },
+        ]);
+
+        setMovie({
+          title: '',
+          openingText: '',
+          releaseDate: '',
+        });
+      } catch (error) {
+        console.log(error);
+      }
+
+      setIsAdding(false);
     },
     [movie]
   );
 
-  const cancelRetry = () => {
-    cancelled.current = true;
+  // Delete movie from Firebase
+  const deleteMovie = useCallback(async (id) => {
+    try {
+      const response = await fetch(
+        `${DATABASE_URL}/${id}.json`,
+        {
+          method: 'DELETE',
+        }
+      );
 
-    if (retryTimeout.current) {
-      clearTimeout(retryTimeout.current);
+      if (!response.ok) {
+        throw new Error('Could not delete movie');
+      }
+
+      setFilms((prevFilms) =>
+        prevFilms.filter((film) => film.id !== id)
+      );
+    } catch (error) {
+      console.log(error);
     }
-
-    setRetrying(false);
-    setError(false);
-    setIsLoading(false);
-  };
+  }, []);
 
   const movieList = useMemo(() => {
     return films.map((film) => (
-      <Card className="mb-3" key={film.episode_id}>
+      <Card className="mb-3" key={film.id}>
         <Card.Body>
           <Card.Title>{film.title}</Card.Title>
 
           <Card.Text>
-            Episode: {film.episode_id}
+            {film.openingText}
           </Card.Text>
+
+          <Card.Text>
+            Release Date: {film.releaseDate}
+          </Card.Text>
+
+          <Button
+            variant="danger"
+            onClick={() => deleteMovie(film.id)}
+          >
+            Delete Movie
+          </Button>
         </Card.Body>
       </Card>
     ));
-  }, [films]);
+  }, [films, deleteMovie]);
 
   return (
     <Container className="py-5">
       <h1 className="text-center mb-4">
-        Star Wars Films
+        Movies
       </h1>
 
       {/* Add Movie Form */}
@@ -137,6 +190,7 @@ function Films() {
             name="title"
             value={movie.title}
             onChange={handleChange}
+            required
           />
         </Form.Group>
 
@@ -149,6 +203,7 @@ function Films() {
             name="openingText"
             value={movie.openingText}
             onChange={handleChange}
+            required
           />
         </Form.Group>
 
@@ -160,46 +215,38 @@ function Films() {
             name="releaseDate"
             value={movie.releaseDate}
             onChange={handleChange}
+            required
           />
         </Form.Group>
 
         <div className="text-center">
-          <Button type="submit">
-            Add Movie
+          <Button type="submit" disabled={isAdding}>
+            {isAdding ? 'Adding...' : 'Add Movie'}
           </Button>
         </div>
       </Form>
 
-      {/* Fetch Movies Button */}
-      <div className="text-center mb-4">
-        <Button onClick={fetchFilms}>
-          Fetch Movies
-        </Button>
-      </div>
-
+      {/* Loading */}
       {isLoading && (
         <div className="text-center">
           <Spinner animation="border" />
         </div>
       )}
 
-      {error && retrying && (
+      {/* Error */}
+      {error && (
         <div className="text-center">
           <h4 className="text-danger">
-            Something went wrong ....Retrying
+            Something went wrong
           </h4>
 
-          <p>Retrying after 5 seconds...</p>
-
-          <Button
-            variant="danger"
-            onClick={cancelRetry}
-          >
-            Cancel Retry
+          <Button onClick={fetchFilms}>
+            Retry
           </Button>
         </div>
       )}
 
+      {/* Movies */}
       {!isLoading && !error && movieList}
     </Container>
   );
