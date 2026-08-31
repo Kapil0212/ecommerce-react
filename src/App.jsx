@@ -20,33 +20,88 @@ import About from './components/About';
 import Cart from './components/Cart';
 import Films from './components/Films';
 import Contact from './components/Contact';
+import ProductDetails from './components/ProductDetails';
 
 import { useCart } from './context/CartContext';
 
 const productsArr = [
   {
+    id: 'p1',
     title: 'Colors',
     price: 100,
-    imageUrl:
+    imageUrls: [
       'https://prasadyash2411.github.io/ecom-website/img/Album%201.png',
+      'https://prasadyash2411.github.io/ecom-website/img/Album%202.png',
+      'https://prasadyash2411.github.io/ecom-website/img/Album%203.png',
+    ],
+    reviews: [
+      {
+        name: 'John',
+        review: 'Amazing product. Really good quality.',
+        rating: 5,
+      },
+      {
+        name: 'Sarah',
+        review: 'Looks great and worth the price.',
+        rating: 4,
+      },
+    ],
   },
   {
+    id: 'p2',
     title: 'Black and white Colors',
     price: 50,
-    imageUrl:
+    imageUrls: [
       'https://prasadyash2411.github.io/ecom-website/img/Album%202.png',
+      'https://prasadyash2411.github.io/ecom-website/img/Album%203.png',
+      'https://prasadyash2411.github.io/ecom-website/img/Album%204.png',
+    ],
+    reviews: [
+      {
+        name: 'Mike',
+        review: 'Good product for the price.',
+        rating: 4,
+      },
+      {
+        name: 'Emma',
+        review: 'I liked the design.',
+        rating: 5,
+      },
+    ],
   },
   {
+    id: 'p3',
     title: 'Yellow and Black Colors',
     price: 70,
-    imageUrl:
+    imageUrls: [
       'https://prasadyash2411.github.io/ecom-website/img/Album%203.png',
+      'https://prasadyash2411.github.io/ecom-website/img/Album%204.png',
+      'https://prasadyash2411.github.io/ecom-website/img/Album%201.png',
+    ],
+    reviews: [
+      {
+        name: 'David',
+        review: 'Nice colors and good quality.',
+        rating: 5,
+      },
+    ],
   },
   {
+    id: 'p4',
     title: 'Blue Color',
     price: 100,
-    imageUrl:
+    imageUrls: [
       'https://prasadyash2411.github.io/ecom-website/img/Album%204.png',
+      'https://prasadyash2411.github.io/ecom-website/img/Album%201.png',
+      'https://prasadyash2411.github.io/ecom-website/img/Album%202.png',
+    ],
+    reviews: [
+      {
+        name: 'Alex',
+        review: 'Very good product.',
+        rating: 4,
+      },
+    ],
   },
 ];
 
@@ -86,10 +141,7 @@ function Store() {
             variant="outline-light"
             onClick={() => setShowCart(!showCart)}
           >
-            🛒 Cart{' '}
-            <Badge bg="danger">
-              {cartItemCount}
-            </Badge>
+            🛒 Cart <Badge bg="danger">{cartItemCount}</Badge>
           </Button>
 
         </div>
@@ -104,9 +156,10 @@ function Store() {
           </h1>
 
           <Row className="g-4 justify-content-center">
+
             {productsArr.map((product) => (
               <Col
-                key={product.title}
+                key={product.id}
                 xs={12}
                 sm={6}
                 md={4}
@@ -114,18 +167,26 @@ function Store() {
               >
                 <Card className="h-100 shadow-sm">
 
-                  <Card.Img
-                    variant="top"
-                    src={product.imageUrl}
-                    alt={product.title}
-                    className="product-image"
-                  />
+                  <NavLink
+                    to={`/product/${product.id}`}
+                    style={{
+                      textDecoration: 'none',
+                      color: 'black',
+                    }}
+                  >
+                    <Card.Img
+                      variant="top"
+                      src={product.imageUrls[0]}
+                      alt={product.title}
+                      className="product-image"
+                    />
 
-                  <Card.Body className="text-center">
-
-                    <Card.Title>
+                    <Card.Title className="text-center mt-3">
                       {product.title}
                     </Card.Title>
+                  </NavLink>
+
+                  <Card.Body className="text-center">
 
                     <Card.Text className="fw-bold">
                       ₹{product.price}
@@ -139,9 +200,11 @@ function Store() {
                     </Button>
 
                   </Card.Body>
+
                 </Card>
               </Col>
             ))}
+
           </Row>
         </Container>
       )}
@@ -163,6 +226,11 @@ function App() {
 
       <Route path="/films">
         <Films />
+      </Route>
+
+      {/* Dynamic Product Route */}
+      <Route path="/product/:productId">
+        <ProductDetails />
       </Route>
 
       <Route path="/store">
