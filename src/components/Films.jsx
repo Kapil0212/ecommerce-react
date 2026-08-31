@@ -6,13 +6,19 @@ import {
   useState,
 } from 'react';
 
-import { Container, Card, Button, Spinner } from 'react-bootstrap';
+import { Container, Card, Button, Spinner, Form } from 'react-bootstrap';
 
 function Films() {
   const [films, setFilms] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [retrying, setRetrying] = useState(false);
+
+  const [movie, setMovie] = useState({
+    title: '',
+    openingText: '',
+    releaseDate: '',
+  });
 
   const retryTimeout = useRef(null);
   const cancelled = useRef(false);
@@ -61,6 +67,30 @@ function Films() {
     };
   }, [fetchFilms]);
 
+  const handleChange = useCallback((event) => {
+    const { name, value } = event.target;
+
+    setMovie((prevMovie) => ({
+      ...prevMovie,
+      [name]: value,
+    }));
+  }, []);
+
+  const handleSubmit = useCallback(
+    (event) => {
+      event.preventDefault();
+
+      const NewMovieObj = {
+        title: movie.title,
+        openingText: movie.openingText,
+        releaseDate: movie.releaseDate,
+      };
+
+      console.log(NewMovieObj);
+    },
+    [movie]
+  );
+
   const cancelRetry = () => {
     cancelled.current = true;
 
@@ -92,6 +122,60 @@ function Films() {
       <h1 className="text-center mb-4">
         Star Wars Films
       </h1>
+
+      {/* Add Movie Form */}
+      <Form
+        onSubmit={handleSubmit}
+        className="mx-auto mb-4"
+        style={{ maxWidth: '600px' }}
+      >
+        <Form.Group className="mb-3">
+          <Form.Label>Title</Form.Label>
+
+          <Form.Control
+            type="text"
+            name="title"
+            value={movie.title}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Opening Text</Form.Label>
+
+          <Form.Control
+            as="textarea"
+            rows={3}
+            name="openingText"
+            value={movie.openingText}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Release Date</Form.Label>
+
+          <Form.Control
+            type="text"
+            name="releaseDate"
+            value={movie.releaseDate}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <div className="text-center">
+          <Button type="submit">
+            Add Movie
+          </Button>
+        </div>
+      </Form>
+
+      {/* Fetch Movies Button */}
+      <div className="text-center mb-4">
+        <Button onClick={fetchFilms}>
+          Fetch Movies
+        </Button>
+      </div>
 
       {isLoading && (
         <div className="text-center">
