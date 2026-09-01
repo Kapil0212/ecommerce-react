@@ -41,12 +41,14 @@ const productsArr = [
     reviews: [
       {
         name: 'John',
-        review: 'Amazing product. Really good quality.',
+        review:
+          'Amazing product. Really good quality.',
         rating: 5,
       },
       {
         name: 'Sarah',
-        review: 'Looks great and worth the price.',
+        review:
+          'Looks great and worth the price.',
         rating: 4,
       },
     ],
@@ -63,12 +65,14 @@ const productsArr = [
     reviews: [
       {
         name: 'Mike',
-        review: 'Good product for the price.',
+        review:
+          'Good product for the price.',
         rating: 4,
       },
       {
         name: 'Emma',
-        review: 'I liked the design.',
+        review:
+          'I liked the design.',
         rating: 5,
       },
     ],
@@ -85,7 +89,8 @@ const productsArr = [
     reviews: [
       {
         name: 'David',
-        review: 'Nice colors and good quality.',
+        review:
+          'Nice colors and good quality.',
         rating: 5,
       },
     ],
@@ -102,7 +107,8 @@ const productsArr = [
     reviews: [
       {
         name: 'Alex',
-        review: 'Very good product.',
+        review:
+          'Very good product.',
         rating: 4,
       },
     ],
@@ -110,14 +116,37 @@ const productsArr = [
 ];
 
 function Store() {
-  const { addToCart, cartItemCount } = useCart();
-  const { isLoggedIn, logout } = useAuth();
+  const {
+    addToCart,
+    cartItemCount,
+    fetchCart,
+  } = useCart();
 
-  const [showCart, setShowCart] = useState(false);
+  const {
+    isLoggedIn,
+    logout,
+  } = useAuth();
+
+  const [showCart, setShowCart] =
+    useState(false);
+
+  const handleCartClick = () => {
+    if (!showCart) {
+      fetchCart();
+    }
+
+    setShowCart((previous) =>
+      !previous
+    );
+  };
 
   return (
     <>
-      <Navbar bg="dark" variant="dark" className="px-4">
+      <Navbar
+        bg="dark"
+        variant="dark"
+        className="px-4"
+      >
         <Navbar.Brand>
           Ecommerce Store
         </Navbar.Brand>
@@ -170,9 +199,10 @@ function Store() {
 
           <Button
             variant="outline-light"
-            onClick={() => setShowCart(!showCart)}
+            onClick={handleCartClick}
           >
             🛒 Cart{' '}
+
             <Badge bg="danger">
               {cartItemCount}
             </Badge>
@@ -192,55 +222,63 @@ function Store() {
 
           <Row className="g-4 justify-content-center">
 
-            {productsArr.map((product) => (
-              <Col
-                key={product.id}
-                xs={12}
-                sm={6}
-                md={4}
-                lg={3}
-              >
-                <Card className="h-100 shadow-sm">
+            {productsArr.map(
+              (product) => (
+                <Col
+                  key={product.id}
+                  xs={12}
+                  sm={6}
+                  md={4}
+                  lg={3}
+                >
+                  <Card className="h-100 shadow-sm">
 
-                  <NavLink
-                    to={`/product/${product.id}`}
-                    style={{
-                      textDecoration: 'none',
-                      color: 'black',
-                    }}
-                  >
-                    <Card.Img
-                      variant="top"
-                      src={product.imageUrls[0]}
-                      alt={product.title}
-                      className="product-image"
-                    />
-
-                    <Card.Title className="text-center mt-3">
-                      {product.title}
-                    </Card.Title>
-                  </NavLink>
-
-                  <Card.Body className="text-center">
-
-                    <Card.Text className="fw-bold">
-                      ₹{product.price}
-                    </Card.Text>
-
-                    <Button
-                      variant="primary"
-                      onClick={() =>
-                        addToCart(product)
-                      }
+                    <NavLink
+                      to={`/product/${product.id}`}
+                      style={{
+                        textDecoration:
+                          'none',
+                        color: 'black',
+                      }}
                     >
-                      Add to Cart
-                    </Button>
+                      <Card.Img
+                        variant="top"
+                        src={
+                          product
+                            .imageUrls[0]
+                        }
+                        alt={
+                          product.title
+                        }
+                        className="product-image"
+                      />
 
-                  </Card.Body>
+                      <Card.Title className="text-center mt-3">
+                        {product.title}
+                      </Card.Title>
+                    </NavLink>
 
-                </Card>
-              </Col>
-            ))}
+                    <Card.Body className="text-center">
+
+                      <Card.Text className="fw-bold">
+                        ₹{product.price}
+                      </Card.Text>
+
+                      <Button
+                        variant="primary"
+                        onClick={() =>
+                          addToCart(product)
+                        }
+                      >
+                        Add to Cart
+                      </Button>
+
+                    </Card.Body>
+
+                  </Card>
+                </Col>
+              )
+            )}
 
           </Row>
 
@@ -250,8 +288,12 @@ function Store() {
   );
 }
 
-function ProtectedRoute({ children, ...rest }) {
-  const { isLoggedIn } = useAuth();
+function ProtectedRoute({
+  children,
+  ...rest
+}) {
+  const { isLoggedIn } =
+    useAuth();
 
   return (
     <Route {...rest}>
@@ -268,17 +310,14 @@ function App() {
   return (
     <Switch>
 
-      {/* Login */}
       <Route exact path="/login">
         <Login />
       </Route>
 
-      {/* Protected Products Page */}
       <ProtectedRoute path="/store">
         <Store />
       </ProtectedRoute>
 
-      {/* Protected Product Details */}
       <ProtectedRoute path="/product/:productId">
         <ProductDetails />
       </ProtectedRoute>

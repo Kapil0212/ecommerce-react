@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { Container, Form, Button, Alert, Spinner } from 'react-bootstrap';
+import {
+  Container,
+  Form,
+  Button,
+  Alert,
+  Spinner,
+} from 'react-bootstrap';
+
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -47,14 +54,18 @@ function Login() {
 
       console.log('JWT / idToken:', data.idToken);
 
-      // Store token in Context + localStorage
+      // Store token in AuthContext
       login(data.idToken);
 
-      // Redirect to products page
+      // Store email for user-specific cart
+      localStorage.setItem('email', email);
+
+      // Redirect to Products page
       history.push('/store');
+
     } catch (error) {
-      console.error(error);
-      setError(error.message);
+      console.error('Login Error:', error);
+      setError(error.message || 'Authentication failed');
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +83,9 @@ function Login() {
       <Form onSubmit={handleSubmit}>
 
         <Form.Group className="mb-3">
-          <Form.Label>Email</Form.Label>
+          <Form.Label>
+            Email
+          </Form.Label>
 
           <Form.Control
             type="email"
@@ -80,12 +93,15 @@ function Login() {
             onChange={(event) =>
               setEmail(event.target.value)
             }
+            placeholder="Enter your email"
             required
           />
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Password</Form.Label>
+          <Form.Label>
+            Password
+          </Form.Label>
 
           <Form.Control
             type="password"
@@ -93,13 +109,14 @@ function Login() {
             onChange={(event) =>
               setPassword(event.target.value)
             }
+            placeholder="Enter your password"
             required
           />
         </Form.Group>
 
         {error && (
           <Alert variant="danger">
-            Authentication failed
+            {error}
           </Alert>
         )}
 
