@@ -14,6 +14,7 @@ import {
   Switch,
   Route,
   NavLink,
+  Redirect,
 } from 'react-router-dom';
 
 import Home from './components/Home';
@@ -116,11 +117,7 @@ function Store() {
 
   return (
     <>
-      <Navbar
-        bg="dark"
-        variant="dark"
-        className="px-4"
-      >
+      <Navbar bg="dark" variant="dark" className="px-4">
         <Navbar.Brand>
           Ecommerce Store
         </Navbar.Brand>
@@ -132,6 +129,13 @@ function Store() {
             className="text-white text-decoration-none"
           >
             Home
+          </NavLink>
+
+          <NavLink
+            to="/store"
+            className="text-white text-decoration-none"
+          >
+            Products
           </NavLink>
 
           <NavLink
@@ -148,20 +152,20 @@ function Store() {
             Contact Us
           </NavLink>
 
-          {!isLoggedIn ? (
-            <NavLink
-              to="/login"
-              className="text-white text-decoration-none"
-            >
-              Login
-            </NavLink>
-          ) : (
+          {isLoggedIn ? (
             <Button
               variant="outline-light"
               onClick={logout}
             >
               Logout
             </Button>
+          ) : (
+            <NavLink
+              to="/login"
+              className="text-white text-decoration-none"
+            >
+              Login
+            </NavLink>
           )}
 
           <Button
@@ -246,13 +250,38 @@ function Store() {
   );
 }
 
+function ProtectedRoute({ children, ...rest }) {
+  const { isLoggedIn } = useAuth();
+
+  return (
+    <Route {...rest}>
+      {isLoggedIn ? (
+        children
+      ) : (
+        <Redirect to="/login" />
+      )}
+    </Route>
+  );
+}
+
 function App() {
   return (
     <Switch>
 
+      {/* Login */}
       <Route exact path="/login">
         <Login />
       </Route>
+
+      {/* Protected Products Page */}
+      <ProtectedRoute path="/store">
+        <Store />
+      </ProtectedRoute>
+
+      {/* Protected Product Details */}
+      <ProtectedRoute path="/product/:productId">
+        <ProductDetails />
+      </ProtectedRoute>
 
       <Route path="/about">
         <About />
@@ -266,15 +295,7 @@ function App() {
         <Films />
       </Route>
 
-      <Route path="/product/:productId">
-        <ProductDetails />
-      </Route>
-
-      <Route path="/store">
-        <Store />
-      </Route>
-
-      <Route path="/">
+      <Route exact path="/">
         <Home />
       </Route>
 
