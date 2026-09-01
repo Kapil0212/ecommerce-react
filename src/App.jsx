@@ -1,4 +1,8 @@
-import React, { useState } from 'react';
+import React, {
+  useState,
+  lazy,
+  Suspense,
+} from 'react';
 
 import {
   Container,
@@ -17,13 +21,34 @@ import {
   Redirect,
 } from 'react-router-dom';
 
-import Home from './components/Home';
-import About from './components/About';
-import Cart from './components/Cart';
-import Films from './components/Films';
-import Contact from './components/Contact';
-import ProductDetails from './components/ProductDetails';
-import Login from './components/Login';
+// Lazy Loading
+const Home = lazy(() =>
+  import('./components/Home')
+);
+
+const About = lazy(() =>
+  import('./components/About')
+);
+
+const Cart = lazy(() =>
+  import('./components/Cart')
+);
+
+const Films = lazy(() =>
+  import('./components/Films')
+);
+
+const Contact = lazy(() =>
+  import('./components/Contact')
+);
+
+const ProductDetails = lazy(() =>
+  import('./components/ProductDetails')
+);
+
+const Login = lazy(() =>
+  import('./components/Login')
+);
 
 import { useCart } from './context/CartContext';
 import { useAuth } from './context/AuthContext';
@@ -308,37 +333,58 @@ function ProtectedRoute({
 
 function App() {
   return (
-    <Switch>
+    <Suspense
+      fallback={
+        <div
+          style={{
+            textAlign: 'center',
+            marginTop: '100px',
+            fontSize: '24px',
+          }}
+        >
+          Loading...
+        </div>
+      }
+    >
+      <Switch>
 
-      <Route exact path="/login">
-        <Login />
-      </Route>
+        {/* Login */}
+        <Route exact path="/login">
+          <Login />
+        </Route>
 
-      <ProtectedRoute path="/store">
-        <Store />
-      </ProtectedRoute>
+        {/* Protected Products */}
+        <ProtectedRoute path="/store">
+          <Store />
+        </ProtectedRoute>
 
-      <ProtectedRoute path="/product/:productId">
-        <ProductDetails />
-      </ProtectedRoute>
+        {/* Protected Product Details */}
+        <ProtectedRoute path="/product/:productId">
+          <ProductDetails />
+        </ProtectedRoute>
 
-      <Route path="/about">
-        <About />
-      </Route>
+        {/* About */}
+        <Route path="/about">
+          <About />
+        </Route>
 
-      <Route path="/contact">
-        <Contact />
-      </Route>
+        {/* Contact */}
+        <Route path="/contact">
+          <Contact />
+        </Route>
 
-      <Route path="/films">
-        <Films />
-      </Route>
+        {/* Films */}
+        <Route path="/films">
+          <Films />
+        </Route>
 
-      <Route exact path="/">
-        <Home />
-      </Route>
+        {/* Home */}
+        <Route exact path="/">
+          <Home />
+        </Route>
 
-    </Switch>
+      </Switch>
+    </Suspense>
   );
 }
 
