@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+
 import {
   Container,
   Row,
@@ -21,8 +22,10 @@ import Cart from './components/Cart';
 import Films from './components/Films';
 import Contact from './components/Contact';
 import ProductDetails from './components/ProductDetails';
+import Login from './components/Login';
 
 import { useCart } from './context/CartContext';
+import { useAuth } from './context/AuthContext';
 
 const productsArr = [
   {
@@ -107,12 +110,20 @@ const productsArr = [
 
 function Store() {
   const { addToCart, cartItemCount } = useCart();
+  const { isLoggedIn, logout } = useAuth();
+
   const [showCart, setShowCart] = useState(false);
 
   return (
     <>
-      <Navbar bg="dark" variant="dark" className="px-4">
-        <Navbar.Brand>Ecommerce Store</Navbar.Brand>
+      <Navbar
+        bg="dark"
+        variant="dark"
+        className="px-4"
+      >
+        <Navbar.Brand>
+          Ecommerce Store
+        </Navbar.Brand>
 
         <div className="d-flex align-items-center gap-3 ms-auto">
 
@@ -137,11 +148,30 @@ function Store() {
             Contact Us
           </NavLink>
 
+          {!isLoggedIn ? (
+            <NavLink
+              to="/login"
+              className="text-white text-decoration-none"
+            >
+              Login
+            </NavLink>
+          ) : (
+            <Button
+              variant="outline-light"
+              onClick={logout}
+            >
+              Logout
+            </Button>
+          )}
+
           <Button
             variant="outline-light"
             onClick={() => setShowCart(!showCart)}
           >
-            🛒 Cart <Badge bg="danger">{cartItemCount}</Badge>
+            🛒 Cart{' '}
+            <Badge bg="danger">
+              {cartItemCount}
+            </Badge>
           </Button>
 
         </div>
@@ -151,6 +181,7 @@ function Store() {
         <Cart />
       ) : (
         <Container className="py-5">
+
           <h1 className="text-center mb-5">
             Products
           </h1>
@@ -194,7 +225,9 @@ function Store() {
 
                     <Button
                       variant="primary"
-                      onClick={() => addToCart(product)}
+                      onClick={() =>
+                        addToCart(product)
+                      }
                     >
                       Add to Cart
                     </Button>
@@ -206,6 +239,7 @@ function Store() {
             ))}
 
           </Row>
+
         </Container>
       )}
     </>
@@ -215,6 +249,10 @@ function Store() {
 function App() {
   return (
     <Switch>
+
+      <Route exact path="/login">
+        <Login />
+      </Route>
 
       <Route path="/about">
         <About />
@@ -228,7 +266,6 @@ function App() {
         <Films />
       </Route>
 
-      {/* Dynamic Product Route */}
       <Route path="/product/:productId">
         <ProductDetails />
       </Route>

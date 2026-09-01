@@ -45,6 +45,9 @@ function Home() {
           <NavLink to="/about" className="nav-link text-white">
             ABOUT
           </NavLink>
+          <NavLink to="/login" className="nav-link text-white">
+           LOGIN
+         </NavLink>
         </div>
       </Navbar>
 
